@@ -1,0 +1,17 @@
+# Binaries and IDE files
+/java/bin/
+*.class
+.idea/
+*.iml
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+
+# OS metadata
+.DS_Store
+Thumbs.db

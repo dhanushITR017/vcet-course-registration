@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Course Registration System | Dhanush K (732925ITR017) | VCET</title>
+  <meta name="description" content="Project-Based Assessment - Scenario 17: Online Course Registration and Student Enrollment Analysis System by Dhanush K (732925ITR017), Class 25IT3A, Department of IT, Velalar College of Engineering and Technology.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- =========================================================================
+       INSTITUTIONAL HEADER & STUDENT BADGE
+       ========================================================================= -->
+  <header class="college-banner">
+    <div class="container college-banner-content">
+      <div class="college-title">
+        <h1>Velalar College of Engineering and Technology</h1>
+        <p>Department of Information Technology | Academic Year: 2026 - 27 (ODD) | Activity: Project-Based Assessment</p>
+      </div>
+      <div class="student-tag-group">
+        <span class="badge badge-gold">Scenario 17</span>
+        <span class="badge badge-primary">Dhanush K</span>
+        <span class="badge badge-primary">Reg: 732925ITR017</span>
+        <span class="badge badge-primary">Class: 25IT3A</span>
+        <a href="https://github.com/dhanushITR017/vcet-course-registration" target="_blank" class="badge badge-gold" style="text-decoration:none; cursor:pointer;" title="View GitHub Repository">
+          GitHub Repo ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       NAVIGATION BAR
+       ========================================================================= -->
+  <nav class="main-nav-bar">
+    <div class="container nav-container">
+      <a href="javascript:void(0)" onclick="switchTab('tab-portal')" class="nav-brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+        Course Reg &amp; Analytics
+      </a>
+
+      <ul class="nav-links">
+        <li><button class="nav-btn active" data-tab="tab-portal" onclick="switchTab('tab-portal')">🎓 Portal &amp; Live App</button></li>
+        <li><button class="nav-btn" data-tab="tab-courses" onclick="switchTab('tab-courses')">📚 4 Courses Overview</button></li>
+        <li><button class="nav-btn" data-tab="tab-se" onclick="switchTab('tab-se')">📐 Software Engineering</button></li>
+        <li><button class="nav-btn" data-tab="tab-dbms" onclick="switchTab('tab-dbms')">💾 DBMS &amp; SQL Terminal</button></li>
+        <li><button class="nav-btn" data-tab="tab-analytics" onclick="switchTab('tab-analytics')">📊 Python Data Science</button></li>
+        <li><button class="nav-btn" data-tab="tab-code" onclick="switchTab('tab-code')">📂 Source Code &amp; Docs</button></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <button class="btn btn-outline btn-sm" onclick="AppState.resetToDefaults()" title="Reset all data to institutional defaults">
+          Reset Demo
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================= -->
+  <main class="container">
+
+    <!-- =======================================================================
+         TAB 1: LIVE PORTAL & INTERACTIVE REGISTRATION SYSTEM
+         ======================================================================= -->
+    <section id="tab-portal" class="page-view active">
+      <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+        <div>
+          <h2>Online Course Registration &amp; Seat Management Portal</h2>
+          <p>Scenario 17: Process registrations, enforce maximum course capacities, eliminate duplicate enrollments, and track course completion records in real-time.</p>
+        </div>
+        <div class="card" style="padding:10px 16px; display:flex; align-items:center; gap:12px;">
+          <label for="active-student-select" style="font-size:0.82rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Acting As:</label>
+          <select id="active-student-select" class="btn btn-outline btn-sm" style="font-weight:600;"></select>
+        </div>
+      </div>
+
+      <!-- Active Student Notification Banner -->
+      <div id="active-student-info" style="background:var(--primary-light); border:1px solid rgba(59,130,246,0.3); padding:10px 18px; border-radius:var(--radius-sm); margin-bottom:24px; font-size:0.88rem;"></div>
+
+      <!-- KPI Metrics Cards -->
+      <div class="grid-cols-4" style="margin-bottom:28px;">
+        <div class="card kpi-card">
+          <div class="kpi-icon blue">🎓</div>
+          <div class="kpi-info">
+            <h4>Total Students</h4>
+            <div class="kpi-val" id="kpi-students">12</div>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-icon green">📚</div>
+          <div class="kpi-info">
+            <h4>Total Courses</h4>
+            <div class="kpi-val" id="kpi-courses">6</div>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-icon purple">📝</div>
+          <div class="kpi-info">
+            <h4>Active Enrollments</h4>
+            <div class="kpi-val" id="kpi-enrollments">22</div>
+          </div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-icon amber">⚡</div>
+          <div class="kpi-info">
+            <h4>Seat Occupancy</h4>
+            <div class="kpi-val" id="kpi-occupancy">64.5%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Catalog Section -->
+      <div style="margin-bottom:36px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="font-size:1.35rem; font-weight:800;">Available Courses &amp; Real-time Seat Limits</h3>
+          <span style="font-size:0.85rem; color:var(--text-muted);">Functional Requirements 2, 3 &amp; 4</span>
+        </div>
+        <div id="course-catalog-cards" class="grid-cols-3"></div>
+      </div>
+
+      <!-- Active Enrollments Table -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:800;">Student Participation &amp; Course Completion Records</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Functional Requirements 1, 5 &amp; 6: Track enrollment status, marks/grades, and seat de-allocation.</p>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Enrollment ID</th>
+                <th>Student Details</th>
+                <th>Course Details</th>
+                <th>Registration Date</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="enrollments-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         TAB 2: FOUR COURSES INTEGRATION OVERVIEW
+         ======================================================================= -->
+    <section id="tab-courses" class="page-view">
+      <div class="page-header">
+        <h2>Four Courses Integration &amp; Academic Role Matrix</h2>
+        <p>Demonstrating how all four prescribed curriculum courses collaborate to deliver this comprehensive, end-to-end fullstack engineering solution for Scenario 17.</p>
+      </div>
+
+      <div class="grid-cols-2" style="margin-bottom:32px;">
+        <!-- Course 1: DBMS -->
+        <div class="card card-hover" style="border-left: 5px solid #2563eb;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span class="badge badge-primary">25ITT31</span>
+            <span class="badge badge-gold">L T P C: 3 0 0 3</span>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:6px;">Database Management Systems (DBMS)</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;"><strong>Project Role:</strong> Central relational persistence, 3NF schema normalization, composite unique constraints, SQL triggers for dynamic seat tracking, and ACID transaction safety.</p>
+          
+          <ul style="font-size:0.84rem; color:var(--text-main); line-height:1.7; padding-left:18px; margin-bottom:16px;">
+            <li><strong>Unit 1 (Design &amp; ER Model):</strong> Complete Chen ER diagram with entities, attributes, and relationships.</li>
+            <li><strong>Unit 2 (SQL):</strong> DDL, DML, multi-table joins, views, and automated triggers.</li>
+            <li><strong>Unit 3 (Normalization):</strong> Progressive decomposition from UNF &rarr; 1NF &rarr; 2NF &rarr; 3NF/BCNF.</li>
+            <li><strong>Unit 4 (Transactions):</strong> ACID transaction consistency and concurrency control.</li>
+            <li><strong>Unit 5 (NoSQL):</strong> Comparative evaluation of Relational vs MongoDB Document model.</li>
+          </ul>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('tab-dbms')">Explore DBMS Page &amp; SQL Terminal &rarr;</button>
+        </div>
+
+        <!-- Course 2: Java Programming -->
+        <div class="card card-hover" style="border-left: 5px solid #10b981;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span class="badge badge-success">25ITT32</span>
+            <span class="badge badge-gold">L T P C: 3 0 0 3</span>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:6px;">Java Programming</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;"><strong>Project Role:</strong> Robust object-oriented business logic, synchronized thread-safe course registration, custom domain exception handling, and Stream API reporting.</p>
+          
+          <ul style="font-size:0.84rem; color:var(--text-main); line-height:1.7; padding-left:18px; margin-bottom:16px;">
+            <li><strong>Unit 1 (Java Fundamentals):</strong> Encapsulation, constructors, accessor methods, and console I/O.</li>
+            <li><strong>Unit 2 (Inheritance &amp; Packages):</strong> Domain models and service abstraction (`services.*`, `models.*`).</li>
+            <li><strong>Unit 3 (Exceptions &amp; Multithreading):</strong> Custom exceptions (`DuplicateEnrollmentException`, `CourseFullException`).</li>
+            <li><strong>Unit 4 (JDBC &amp; Strings):</strong> Database connection architecture and transaction commits.</li>
+            <li><strong>Unit 5 (Collections &amp; Streams):</strong> ConcurrentHashMap and functional Stream API filtering/grouping.</li>
+          </ul>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('tab-code')">View Java Source Code &rarr;</button>
+        </div>
+
+        <!-- Course 3: Software Engineering -->
+        <div class="card card-hover" style="border-left: 5px solid #f59e0b;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span class="badge badge-warning">25ITT33</span>
+            <span class="badge badge-gold">L T P C: 3 0 0 3</span>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:6px;">Software Engineering</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;"><strong>Project Role:</strong> System development lifecycle governance, IEEE 830 SRS, UML architectural modeling, basis path white-box testing, and COCOMO project estimation.</p>
+          
+          <ul style="font-size:0.84rem; color:var(--text-main); line-height:1.7; padding-left:18px; margin-bottom:16px;">
+            <li><strong>Unit 1 (Software Process):</strong> Agile Scrum sprint lifecycle and iterative model rationale.</li>
+            <li><strong>Unit 2 (Requirements):</strong> Requirements elicitation, functional &amp; non-functional specifications.</li>
+            <li><strong>Unit 3 (Design):</strong> Structured diagrams (Architecture, Class, Component, Activity, Use Case).</li>
+            <li><strong>Unit 4 (Testing):</strong> Black-box boundary checks, White-box cyclomatic complexity (V(G)=6).</li>
+            <li><strong>Unit 5 (Project Management):</strong> 4P's, Function Points calculation, COCOMO estimation, Risk matrix.</li>
+          </ul>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('tab-se')">Explore Software Engineering Page &rarr;</button>
+        </div>
+
+        <!-- Course 4: Foundations of Data Science -->
+        <div class="card card-hover" style="border-left: 5px solid #8b5cf6;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span class="badge badge-primary">25ITC31</span>
+            <span class="badge badge-gold">L T P C: 3 0 2 4</span>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:6px;">Foundations of Data Science</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;"><strong>Project Role:</strong> Data wrangling, preprocessing relational tables with Pandas &amp; NumPy, detecting missing completion scores, and generating publication-grade EDA visualizations.</p>
+          
+          <ul style="font-size:0.84rem; color:var(--text-main); line-height:1.7; padding-left:18px; margin-bottom:16px;">
+            <li><strong>Unit 1 (Data Fundamentals):</strong> Descriptive statistics (mean, median, standard deviation of scores).</li>
+            <li><strong>Unit 2 (Python Foundations):</strong> Modular functions, dictionaries, file exports, and data structures.</li>
+            <li><strong>Unit 3 (Data Wrangling):</strong> NumPy arrays, Pandas DataFrames, and multi-table relational merges.</li>
+            <li><strong>Unit 4 (Data Cleaning):</strong> Duplicate detection, handling null scores, and feature transformations.</li>
+            <li><strong>Unit 5 (EDA &amp; Visualization):</strong> Matplotlib &amp; Seaborn charts for course popularity &amp; demographics.</li>
+          </ul>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('tab-analytics')">View Python Analytics &amp; Charts &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         TAB 3: SOFTWARE ENGINEERING (DEDICATED UNIT-WISE PAGE)
+         ======================================================================= -->
+    <section id="tab-se" class="page-view">
+      <div class="page-header">
+        <h2>Software Engineering (25ITT33) - Unit-Wise Analysis &amp; Diagrams</h2>
+        <p>Complete lifecycle breakdown covering Process Models, Requirements Elicitation, Structured UML Diagrams, Verification &amp; Validation Testing, and Project Management.</p>
+      </div>
+
+      <!-- Unit 1 -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 1</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Software Process: Agile Scrum Methodology</h3>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:14px;">
+          For Scenario 17, an <strong>Agile Scrum process model</strong> with prescriptive checkpoints was chosen over rigid Waterfall. This accommodated continuous feedback on capacity validation rules, real-time student seat tracking, and responsive UI prototyping.
+        </p>
+        <div style="background:var(--bg-main); padding:16px 20px; border-radius:var(--radius-sm); border-left:4px solid var(--primary); font-size:0.88rem;">
+          <strong>Sprint Breakdown:</strong><br>
+          • <strong>Sprint 1 (Requirements &amp; SRS):</strong> Elicitation of Scenario 17 functional boundaries (enforce seat limits, prevent duplicates).<br>
+          • <strong>Sprint 2 (System &amp; DB Design):</strong> Layered MVC architecture, UML diagrams, and 3NF relational database schema.<br>
+          • <strong>Sprint 3 (Core Implementation):</strong> Java models, custom exceptions, thread synchronization, and SQL triggers.<br>
+          • <strong>Sprint 4 (Data Science Pipeline):</strong> Python data wrangling, Pandas preprocessing, and Matplotlib/Seaborn visualizations.<br>
+          • <strong>Sprint 5 (Testing &amp; Deployment):</strong> White-box basis path testing, black-box testing, and 24/7 GitHub Pages live hosting.
+        </div>
+      </div>
+
+      <!-- Unit 2 -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 2</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Requirements Engineering &amp; Use Case Modeling</h3>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:14px;">
+          The IEEE 830 Software Requirements Specification formally defines the core functional and non-functional requirements for eliminating registration errors.
+        </p>
+        <div class="grid-cols-2" style="font-size:0.86rem; gap:16px;">
+          <div style="background:var(--bg-main); padding:14px; border-radius:var(--radius-sm);">
+            <strong style="color:var(--primary);">Functional Requirements (Scenario 17):</strong>
+            <ul style="padding-left:18px; margin-top:6px; line-height:1.6;">
+              <li><strong>FR-01:</strong> Maintain student ID, name, department, and year of study.</li>
+              <li><strong>FR-02:</strong> Maintain course ID, name, category, duration, and capacity.</li>
+              <li><strong>FR-03:</strong> Allow student registration and prevent duplicate registrations.</li>
+              <li><strong>FR-04:</strong> Verify course capacity before confirming registration.</li>
+              <li><strong>FR-05:</strong> Track enrollment status and course completion records.</li>
+              <li><strong>FR-06:</strong> Generate reports on enrollments, seats, and completions.</li>
+              <li><strong>FR-07:</strong> Ingest database records into Python for visualization.</li>
+            </ul>
+          </div>
+          <div style="background:var(--bg-main); padding:14px; border-radius:var(--radius-sm);">
+            <strong style="color:var(--accent);">Actors &amp; System Roles:</strong>
+            <ul style="padding-left:18px; margin-top:6px; line-height:1.6;">
+              <li><strong>Student:</strong> Browses catalog, selects course, submits registration, views active courses, and downloads completion certificate.</li>
+              <li><strong>Instructor:</strong> Reviews course roster, grades student performance, and records course completion status.</li>
+              <li><strong>Administrator:</strong> Adjusts course capacity limits, resolves enrollment escalations, and generates department analytical reports.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit 3: Design & Diagrams -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 3</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Software Design &amp; Structured Diagrams</h3>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:18px;">
+          All structured diagrams below are rendered in high-definition SVG, conforming strictly to UML 2.0 and the diagram styles specified in your assessment guidelines.
+        </p>
+
+        <!-- Diagram 1: Architecture -->
+        <div style="margin-bottom:32px;">
+          <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:8px; color:var(--text-main);">1. Overall System Architecture Diagram (Layered MVC + Data + Analytics)</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Depicts the presentation, business logic, data persistence, and Python data science analytics subsystems.</p>
+          <div id="diagram-architecture" class="diagram-container"></div>
+        </div>
+
+        <!-- Diagram 2: Class Diagram -->
+        <div style="margin-bottom:32px;">
+          <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:8px; color:var(--text-main);">2. UML Class Diagram (Matching Reference Image 2 Style)</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Features 3-compartment boxes (Class Name, Attributes, Operations) with inheritance arrows and associations.</p>
+          <div id="diagram-class" class="diagram-container"></div>
+        </div>
+
+        <!-- Diagram 3: Component Diagram -->
+        <div style="margin-bottom:32px;">
+          <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:8px; color:var(--text-main);">3. UML Component Diagram (Matching Reference Image 3 Style)</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Features component rectangles with Ports, Provided lollipop interfaces (circle), and Required socket interfaces (cup).</p>
+          <div id="diagram-component" class="diagram-container"></div>
+        </div>
+
+        <!-- Diagram 4: Activity Diagram -->
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:8px; color:var(--text-main);">4. UML Activity Diagram (Matching Reference Image 1 Style)</h4>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Features Initial node, Decision diamonds (`[Seat Available]`, `[Duplicate Check]`), Fork and Join synchronization bars, and Final bullseye node.</p>
+          <div id="diagram-activity" class="diagram-container"></div>
+        </div>
+      </div>
+
+      <!-- Unit 4: Testing -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 4</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Software Testing &amp; Verification Suite</h3>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:14px;">
+          Comprehensive verification and validation combining White-Box Basis Path Testing with Black-Box Boundary Value Analysis.
+        </p>
+
+        <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm); margin-bottom:18px; font-size:0.86rem;">
+          <strong style="color:var(--primary);">White-Box Testing: Cyclomatic Complexity V(G) Calculation:</strong><br>
+          For method <code>EnrollmentService.enrollStudent(studentId, courseId)</code>:<br>
+          • 5 Predicate decision nodes: (1) Student validity, (2) Course validity, (3) Duplicate check, (4) Capacity full check, (5) Atomic seat reservation.<br>
+          • <strong>Cyclomatic Complexity:</strong> \( V(G) = P + 1 = 5 + 1 = 6 \) independent execution paths.<br>
+          • <strong>Result:</strong> All 6 paths executed and verified via unit tests in <code>Main.java</code>.
+        </div>
+
+        <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:10px;">Black-Box Test Case Execution Matrix:</h4>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Test ID</th>
+                <th>Test Feature</th>
+                <th>Input Data</th>
+                <th>Expected Result</th>
+                <th>Actual Result</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TC-01</strong></td>
+                <td>Student Registration</td>
+                <td>Dhanush K (732925ITR017, IT, Yr 3)</td>
+                <td>Student profile created in memory/db</td>
+                <td>Created successfully</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>TC-02</strong></td>
+                <td>Course Enrollment</td>
+                <td>Dhanush K into CRS101 (Seats: 10)</td>
+                <td>Enrollment created, seat count incremented</td>
+                <td>Enrollment confirmed</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>TC-03</strong></td>
+                <td>Duplicate Prevention</td>
+                <td>Dhanush K into CRS101 (Already registered)</td>
+                <td>DuplicateEnrollmentException thrown</td>
+                <td>Exception caught, duplicate blocked</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>TC-04</strong></td>
+                <td>Capacity Boundary Check</td>
+                <td>Register student into course with 0 seats</td>
+                <td>CourseFullException thrown</td>
+                <td>Exception caught, overbooking prevented</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>TC-05</strong></td>
+                <td>Course Completion</td>
+                <td>Mark ENR101 complete with score 96.5%</td>
+                <td>Status = COMPLETED, score saved</td>
+                <td>Record updated</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+              <tr>
+                <td><strong>TC-06</strong></td>
+                <td>Course Cancellation</td>
+                <td>Cancel enrollment ENR101</td>
+                <td>Status = CANCELLED, seat released</td>
+                <td>Seat restored to pool</td>
+                <td><span class="badge badge-success">PASS</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Unit 5: Project Management -->
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 5</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Project Management &amp; Estimation Metrics</h3>
+        </div>
+        <div class="grid-cols-3" style="font-size:0.86rem; gap:16px;">
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm);">
+            <strong style="color:var(--primary);">The 4 P's Framework:</strong>
+            <ul style="padding-left:18px; margin-top:8px; line-height:1.6;">
+              <li><strong>People:</strong> Dhanush K (Lead Developer), Faculty evaluators.</li>
+              <li><strong>Product:</strong> Scenario 17 Course Registration Portal.</li>
+              <li><strong>Process:</strong> Agile Scrum 5-sprint methodology.</li>
+              <li><strong>Project:</strong> Fullstack web app, Java core, SQL, Python EDA.</li>
+            </ul>
+          </div>
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm);">
+            <strong style="color:var(--accent);">COCOMO Cost Estimation:</strong>
+            <p style="margin-top:8px; line-height:1.6;">
+              Organic Mode Formula:<br>
+              \( Effort = 2.4 \times (KLOC)^{1.05} \)<br>
+              With \( KLOC \approx 1.2 \) (Java + Python + Web):<br>
+              <strong>Effort:</strong> 2.91 Person-Months.<br>
+              <strong>Duration:</strong> \( 2.5 \times (Effort)^{0.38} \approx 3.75 \) Months.
+            </p>
+          </div>
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm);">
+            <strong style="color:var(--accent-amber);">Risk Management:</strong>
+            <ul style="padding-left:18px; margin-top:8px; line-height:1.6;">
+              <li><strong>Concurrency Overbooking:</strong> Mitigated via Java synchronized methods and database composite constraints.</li>
+              <li><strong>Hosting Uptime:</strong> Mitigated using GitHub Pages for 100% 24/7 free permanent uptime.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         TAB 4: DBMS & INTERACTIVE SQL TERMINAL (DEDICATED PAGE)
+         ======================================================================= -->
+    <section id="tab-dbms" class="page-view">
+      <div class="page-header">
+        <h2>Database Management Systems (25ITT31) &amp; Interactive SQL Terminal</h2>
+        <p>ER Modeling (Chen Notation), Relational Normalization, and a Live In-Browser SQL Terminal allowing you to run queries and see output tables immediately.</p>
+      </div>
+
+      <!-- ER Diagram Section -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 1</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Entity-Relationship (ER) Diagram (Matching Reference Image 4)</h3>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:16px;">
+          Structured in classic Chen notation: Rectangles (Entities), Ellipses (Attributes, with Primary Keys underlined), Diamonds (Relationships), and Cardinality ratios (1:N, M:N).
+        </p>
+        <div id="diagram-er" class="diagram-container"></div>
+      </div>
+
+      <!-- Relational Normalization (Unit 3) -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span class="badge badge-primary">Unit 3</span>
+          <h3 style="font-size:1.3rem; font-weight:800;">Relational Normalization Process (UNF &rarr; 1NF &rarr; 2NF &rarr; 3NF/BCNF)</h3>
+        </div>
+        <div class="grid-cols-3" style="font-size:0.86rem; gap:16px;">
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm); border-top:3px solid #3b82f6;">
+            <strong>1. First Normal Form (1NF)</strong>
+            <p style="margin-top:6px; color:var(--text-muted);">
+              Eliminated repeating groups. All attributes are atomic scalars.<br>
+              <strong>Primary Key:</strong> <code>(student_id, course_id)</code><br>
+              <strong>Functional Dependencies:</strong><br>
+              • <code>student_id &rarr; name, dept, year, email</code><br>
+              • <code>course_id &rarr; name, category, duration, capacity</code>
+            </p>
+          </div>
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm); border-top:3px solid #10b981;">
+            <strong>2. Second Normal Form (2NF)</strong>
+            <p style="margin-top:6px; color:var(--text-muted);">
+              Removed partial functional dependencies on composite candidate key.<br>
+              Decomposed into separate relations:<br>
+              • <code>STUDENTS(student_id [PK], name, dept, year, email)</code><br>
+              • <code>COURSES(course_id [PK], name, category, duration, capacity)</code><br>
+              • <code>ENROLLMENTS(enrollment_id [PK], student_id [FK], course_id [FK], status, score)</code>
+            </p>
+          </div>
+          <div style="background:var(--bg-main); padding:16px; border-radius:var(--radius-sm); border-top:3px solid #f59e0b;">
+            <strong>3. Third Normal Form (3NF / BCNF)</strong>
+            <p style="margin-top:6px; color:var(--text-muted);">
+              Removed transitive dependency in Courses (<code>course_id &rarr; category_id &rarr; category_name</code>).<br>
+              Decomposed into:<br>
+              • <code>CATEGORIES(category_id [PK], category_name, description)</code><br>
+              • <code>COURSES(course_id [PK], name, category_id [FK], ...)</code><br>
+              All relations are now fully in <strong>3NF and BCNF</strong>!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive SQL Terminal Window -->
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+              <span class="badge badge-success">Live Engine</span>
+              <h3 style="font-size:1.3rem; font-weight:800;">Interactive SQL Terminal Simulator</h3>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.88rem;">Select a preset or type a custom query to run directly against the live database state and inspect the output tables.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="runSqlFromTerminal()">▶ Execute Query</button>
+          </div>
+        </div>
+
+        <!-- Query Presets -->
+        <div style="margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_available_courses')">1. Available Seats</button>
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_student_enrollments')">2. Student Join</button>
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_course_popularity')">3. Popularity &amp; Aggregate</button>
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_nested_query')">4. Nested Subquery</button>
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_dept_participation')">5. Department Stats</button>
+          <button class="btn btn-outline btn-sm" onclick="loadSqlPreset('q_view_summary')">6. View Summary</button>
+          <button class="btn btn-danger btn-sm" onclick="loadSqlPreset('q_test_duplicate')">7. Test Duplicate Constraint</button>
+        </div>
+
+        <!-- Terminal Interface -->
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <div class="terminal-title">MySQL 8.0 Command Line Client - course_registration_db</div>
+            <div style="font-size:0.75rem; color:#64748b;">Terminal Host: localhost:3306</div>
+          </div>
+          
+          <div class="terminal-body">
+            <pre id="sql-terminal-output" class="terminal-output"></pre>
+          </div>
+
+          <div class="terminal-input-bar">
+            <span class="terminal-prompt">mysql&gt;</span>
+            <input type="text" id="sql-terminal-input" class="terminal-input" value="SELECT * FROM courses;" placeholder="Type SQL query or click a preset above...">
+            <button class="btn btn-primary btn-sm" onclick="runSqlFromTerminal()">Run</button>
+          </div>
+        </div>
+
+        <!-- HTML Table Viewport for Terminal Output -->
+        <div id="sql-terminal-table-container"></div>
+      </div>
+
+      <!-- Step-by-Step Terminal Execution Guide -->
+      <div class="card">
+        <h3 style="font-size:1.15rem; font-weight:800; margin-bottom:12px;">How to Run Queries in Real Terminal (MySQL CLI Guide)</h3>
+        <div style="background:var(--bg-main); padding:16px 20px; border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:0.84rem; line-height:1.7;">
+          <span style="color:#64748b;"># Step 1: Open Terminal and log into MySQL</span><br>
+          mysql -u root -p<br><br>
+          <span style="color:#64748b;"># Step 2: Create and select database</span><br>
+          CREATE DATABASE course_registration_db;<br>
+          USE course_registration_db;<br><br>
+          <span style="color:#64748b;"># Step 3: Run schema and seed scripts</span><br>
+          SOURCE D:/pro76/database/schema.sql;<br>
+          SOURCE D:/pro76/database/sample_data.sql;<br><br>
+          <span style="color:#64748b;"># Step 4: Run queries and view output table</span><br>
+          SELECT * FROM v_course_enrollment_summary;
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         TAB 5: PYTHON DATA SCIENCE ANALYTICS (DEDICATED PAGE)
+         ======================================================================= -->
+    <section id="tab-analytics" class="page-view">
+      <div class="page-header">
+        <h2>Foundations of Data Science (25ITC31) - Analytics Dashboard</h2>
+        <p>Demonstrating NumPy &amp; Pandas data wrangling, missing score preprocessing, and Exploratory Data Analysis (EDA) visualizations.</p>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="grid-cols-2" style="margin-bottom:28px;">
+        <!-- Chart 1: Course Popularity -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:1.1rem; font-weight:700;">Course Capacity vs. Actual Enrolled Students</h3>
+            <span class="badge badge-primary">Matplotlib Simulation</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Compares maximum room capacity against active registrations per course.</p>
+          <canvas id="chart-course-capacity" width="600" height="340" style="width:100%; height:auto;"></canvas>
+        </div>
+
+        <!-- Chart 2: Department Distribution -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:1.1rem; font-weight:700;">Student Participation by Engineering Department</h3>
+            <span class="badge badge-success">Seaborn Doughnut</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Percentage breakdown across IT, CSE, AIDS, ECE, MECH, and EEE branches.</p>
+          <canvas id="chart-dept-pie" width="600" height="340" style="width:100%; height:auto;"></canvas>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:1.1rem; font-weight:700;">Overall Enrollment &amp; Completion Status Lifecycle</h3>
+          <span class="badge badge-warning">Status Metrics</span>
+        </div>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Tally of students currently in COMPLETED, IN_PROGRESS, REGISTERED, or CANCELLED status.</p>
+        <canvas id="chart-status-bar" width="900" height="260" style="width:100%; height:auto;"></canvas>
+      </div>
+
+      <!-- Python Code Snippet View -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:1.15rem; font-weight:800;">Python Data Science Script (enrollment_analysis.py)</h3>
+          <span class="badge badge-gold">Pandas + Seaborn</span>
+        </div>
+        <div style="background:#0f172a; color:#f8fafc; padding:16px; border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:0.82rem; overflow-x:auto; max-height:360px;">
+<pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Unit 3: Ingest relational tables & wrangle
+df_students = pd.DataFrame(students_data)
+df_courses = pd.DataFrame(courses_data)
+df_enrollments = pd.DataFrame(enrollments_data)
+
+# Unit 4: Data Cleaning & Joins
+df_merged = df_enrollments.merge(df_students, on='student_id').merge(df_courses, on='course_id')
+
+# Unit 5: EDA & Visualizations
+course_stats = df_merged.groupby(['course_id', 'course_name', 'capacity']).agg(
+    total_enrolled=('enrollment_id', 'count'),
+    completed=('status', lambda s: (s == 'COMPLETED').sum())
+).reset_index()
+
+plt.figure(figsize=(10, 5))
+plt.bar(course_stats['course_name'], course_stats['total_enrolled'], color='#3b82f6')
+plt.title('Course Popularity Analysis - Developer: Dhanush K (732925ITR017)')
+plt.savefig('python/generated_charts/course_popularity.png')</code></pre>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =======================================================================
+         TAB 6: SOURCE CODE & DOCUMENTATION REPOSITORY HUB
+         ======================================================================= -->
+    <section id="tab-code" class="page-view">
+      <div class="page-header">
+        <h2>Source Code, SQL Scripts &amp; Documentation Hub</h2>
+        <p>Complete project repository deliverables ready for submission and GitHub deployment.</p>
+      </div>
+
+      <div class="grid-cols-3" style="margin-bottom:32px;">
+        <div class="card card-hover">
+          <span class="badge badge-primary" style="margin-bottom:8px;">Java Source Files</span>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:6px;">Java Application (25ITT32)</h3>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Complete OOP architecture with custom exceptions, services, and Main CLI test runner.</p>
+          <ul style="font-size:0.8rem; font-family:var(--font-mono); line-height:1.7; margin-bottom:12px; list-style:none;">
+            <li>📄 Main.java</li>
+            <li>📄 models/Student.java</li>
+            <li>📄 models/Course.java</li>
+            <li>📄 models/Enrollment.java</li>
+            <li>📄 services/EnrollmentService.java</li>
+            <li>📄 exceptions/CourseFullException.java</li>
+          </ul>
+        </div>
+
+        <div class="card card-hover">
+          <span class="badge badge-success" style="margin-bottom:8px;">SQL &amp; Database</span>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:6px;">DBMS Files (25ITT31)</h3>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">Full DDL schemas, comprehensive seed data, complex join/aggregate queries, and terminal guide.</p>
+          <ul style="font-size:0.8rem; font-family:var(--font-mono); line-height:1.7; margin-bottom:12px; list-style:none;">
+            <li>📄 database/schema.sql</li>
+            <li>📄 database/sample_data.sql</li>
+            <li>📄 database/queries.sql</li>
+            <li>📄 database/terminal_guide.md</li>
+            <li>📄 docs/DBMS_DESIGN.md</li>
+          </ul>
+        </div>
+
+        <div class="card card-hover">
+          <span class="badge badge-warning" style="margin-bottom:8px;">SE &amp; Data Science</span>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:6px;">SE Docs &amp; Python (25ITC31)</h3>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:12px;">IEEE 830 SRS, Software Engineering unit guide, Testing matrix, and Python analysis scripts.</p>
+          <ul style="font-size:0.8rem; font-family:var(--font-mono); line-height:1.7; margin-bottom:12px; list-style:none;">
+            <li>📄 docs/SRS.md</li>
+            <li>📄 docs/SOFTWARE_ENGINEERING.md</li>
+            <li>📄 docs/TESTING.md</li>
+            <li>📄 python/enrollment_analysis.py</li>
+            <li>📄 python/requirements.txt</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- GitHub Push Instructions Card -->
+      <div class="card">
+        <h3 style="font-size:1.2rem; font-weight:800; margin-bottom:8px;">GitHub 24/7 Hosting &amp; Push Instructions</h3>
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;">
+          This repository is prepared to push directly to your GitHub repository:
+          <code style="color:var(--primary); font-weight:700;">https://github.com/dhanushITR017/vcet-course-registration.git</code>.
+        </p>
+        <div style="background:#0f172a; color:#f8fafc; padding:16px 20px; border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:0.84rem; line-height:1.8;">
+          <span style="color:#64748b;"># 1. Initialize git and commit all project files</span><br>
+          git init<br>
+          git add .<br>
+          git commit -m "Complete Scenario 17 project submission with live website, Java, DBMS, and Python"<br><br>
+          <span style="color:#64748b;"># 2. Add remote origin and push to main</span><br>
+          git branch -M main<br>
+          git remote add origin https://github.com/dhanushITR017/vcet-course-registration.git<br>
+          git push -u origin main<br><br>
+          <span style="color:#64748b;"># 3. Enable 24/7 Free Live Hosting on GitHub Pages</span><br>
+          <span style="color:#34d399;">In your GitHub repo: Go to Settings &rarr; Pages &rarr; Source: 'Deploy from a branch' &rarr; Select 'main' and '/ (root)' &rarr; Save!</span><br>
+          <span style="color:#38bdf8;">Your site is live at: https://dhanushitr017.github.io/vcet-course-registration/</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        <strong>Velalar College of Engineering and Technology (Autonomous), Erode – 12</strong><br>
+        Department of Information Technology | Academic Year 2026-27 (ODD)<br>
+        Scenario 17: Online Course Registration and Student Enrollment Analysis System
+      </div>
+      <div style="text-align:right;">
+        <strong>Developer: Dhanush K</strong> | Reg No: <strong>732925ITR017</strong> | Class: <strong>25IT3A</strong><br>
+        Courses: 25ITT31 (DBMS) • 25ITT32 (Java) • 25ITT33 (SE) • 25ITC31 (Data Science)<br>
+        Hosted 24/7 on GitHub Pages
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/diagrams.js"></script>
+  <script src="js/sql-engine.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
